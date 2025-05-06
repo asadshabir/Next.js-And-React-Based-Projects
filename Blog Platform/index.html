@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="A professional blog platform by Asad Shabir, featuring articles on web development, React, and software engineering." />
+  <meta name="keywords" content="web development, React, software engineering, blog, programming" />
+  <meta name="author" content="Asad Shabir" />
+  <meta property="og:title" content="Asad's Blog Platform" />
+  <meta property="og:description" content="Explore articles on web development, React, and software engineering by Asad Shabir." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://your-blog-platform.netlify.app" />
+  <meta property="og:image" content="https://your-blog-platform.netlify.app/images/og-image.jpg" />
+  <title>Asad's Blog Platform</title>
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.22.9/babel.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-markdown@9.0.1/dist/react-markdown.umd.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f1f5f9;
+      color: #1e293b;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+    .blog-post {
+      transition: all 0.3s ease;
+    }
+    .blog-post:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    }
+    .category-btn {
+      transition: all 0.3s ease;
+    }
+    .category-btn:hover {
+      background-color: #2563eb;
+      transform: scale(1.05);
+    }
+    .category-btn.active {
+      background-color: #1e40af;
+      font-weight: 600;
+    }
+    .markdown-content h1 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 1rem;
+    }
+    .markdown-content h2 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+    .markdown-content p {
+      margin-bottom: 1rem;
+    }
+    .markdown-content ul {
+      list-style: disc;
+      padding-left: 1.5rem;
+      margin-bottom: 1rem;
+    }
+    .markdown-content a {
+      color: #2563eb;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const blogPosts = [
+      {
+        id: 1,
+        title: "Getting Started with React: A Beginner's Guide",
+        category: "React",
+        date: "2025-05-01",
+        excerpt: "Learn the basics of React, including components, state, and props, in this beginner-friendly guide.",
+        content: `
+# Getting Started with React
+
+React is a powerful JavaScript library for building user interfaces. Here's what you need to know to get started:
+
+## Why Use React?
+- **Component-Based**: Build reusable UI components.
+- **Fast Rendering**: Uses a virtual DOM for efficient updates.
+- **Huge Ecosystem**: Tons of libraries and tools.
+
+## Setting Up Your First React App
+1. Install Node.js and npm.
+2. Run \`npx create-react-app my-app\` to set up a new project.
+3. Start the development server with \`npm start\`.
+
+## Key Concepts
+- **Components**: The building blocks of React apps.
+- **State**: Manage dynamic data with \`useState\`.
+- **Props**: Pass data to components.
+
+Check out the [official React docs](https://reactjs.org) for more details!
+        `,
+      },
+      {
+        id: 2,
+        title: "Building a Blog Platform with React and Markdown",
+        category: "Web Development",
+        date: "2025-04-15",
+        excerpt: "Discover how to create a blog platform using React and markdown for easy content management.",
+        content: `
+# Building a Blog Platform with React and Markdown
+
+In this post, we'll explore how to build a blog platform like this one using React and markdown.
+
+## Why Markdown?
+Markdown is a lightweight markup language that makes it easy to write and format content. It's perfect for blogs because:
+- Easy to learn and use.
+- Supported by many tools, like \`react-markdown\`.
+- Clean and readable syntax.
+
+## Steps to Build the Platform
+1. Set up a React project with \`create-react-app\`.
+2. Install \`react-markdown\` to render markdown content.
+3. Create a list of blog posts with metadata (title, category, etc.).
+4. Add category filtering and SEO meta tags.
+
+## SEO Tips
+- Use meta tags for description and keywords.
+- Add Open Graph tags for social sharing.
+- Ensure your site is accessible and fast.
+
+This platform is a great example of combining React with markdown for a professional blog!
+        `,
+      },
+      {
+        id: 3,
+        title: "Understanding JavaScript Closures",
+        category: "JavaScript",
+        date: "2025-03-20",
+        excerpt: "A deep dive into JavaScript closures, how they work, and practical use cases.",
+        content: `
+# Understanding JavaScript Closures
+
+Closures are a fundamental concept in JavaScript that every developer should understand.
+
+## What is a Closure?
+A closure is a function that retains access to its outer scope's variables even after the outer function has finished executing.
+
+## Example
+\`\`\`javascript
+function outer() {
+  let count = 0;
+  return function inner() {
+    count++;
+    console.log(count);
+  };
+}
+
+const counter = outer();
+counter(); // 1
+counter(); // 2
+\`\`\`
+
+## Use Cases
+- **Data Privacy**: Hide variables from the global scope.
+- **Event Handlers**: Maintain state in callbacks.
+- **Functional Programming**: Create higher-order functions.
+
+Learn more about closures in the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Closures).
+        `,
+      },
+    ];
+
+    const BlogPlatform = () => {
+      const [selectedCategory, setSelectedCategory] = useState("All");
+      const [selectedPost, setSelectedPost] = useState(null);
+
+      const categories = ["All", "React", "Web Development", "JavaScript"];
+
+      const filteredPosts = selectedCategory === "All"
+        ? blogPosts
+        : blogPosts.filter((post) => post.category === selectedCategory);
+
+      return (
+        <div className="max-w-5xl mx-auto p-6">
+          <header className="text-center mb-12">
+            <h1 className="text-4xl font-bold text-gray-800 mb-2">
+              Asad's Blog Platform
+            </h1>
+            <p className="text-gray-600">
+              Insights on Web Development, React, and Software Engineering
+            </p>
+          </header>
+
+          {/* Category Filter */}
+          <div className="flex justify-center space-x-4 mb-8">
+            {categories.map((category) => (
+              <button
+                key={category}
+                onClick={() => setSelectedCategory(category)}
+                className={`category-btn px-4 py-2 rounded-md text-sm text-white ${
+                  selectedCategory === category ? "active" : "bg-blue-500"
+                }`}
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+
+          {/* Blog Posts or Single Post View */}
+          {selectedPost ? (
+            <div className="bg-white rounded-lg shadow-md p-6">
+              <button
+                onClick={() => setSelectedPost(null)}
+                className="mb-4 text-blue-500 hover:text-blue-600"
+              >
+                ← Back to Posts
+              </button>
+              <h1 className="text-2xl font-bold text-gray-800 mb-2">{selectedPost.title}</h1>
+              <p className="text-sm text-gray-500 mb-4">
+                {selectedPost.date} | {selectedPost.category}
+              </p>
+              <div className="markdown-content">
+                <ReactMarkdown>{selectedPost.content}</ReactMarkdown>
+              </div>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {filteredPosts.map((post) => (
+                <div
+                  key={post.id}
+                  onClick={() => setSelectedPost(post)}
+                  className="blog-post bg-white rounded-lg shadow-md p-6 cursor-pointer"
+                >
+                  <h2 className="text-xl font-semibold text-gray-800 mb-2">{post.title}</h2>
+                  <p className="text-sm text-gray-500 mb-2">{post.date} | {post.category}</p>
+                  <p className="text-gray-600">{post.excerpt}</p>
+                </div>
+              ))}
+            </div>
+          )}
+
+          <footer className="text-center text-gray-500 mt-12 py-6">
+            <p>© 2025 Asad Shabir. All Rights Reserved.</p>
+          </footer>
+        </div>
+      );
+    };
+
+    ReactDOM.render(<BlogPlatform />, document.getElementById("root"));
+  </script>
+</body>
+</html>

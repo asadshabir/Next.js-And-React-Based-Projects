@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Social Media App</title>
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.22.9/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #1a202c;
+      margin: 0;
+      padding: 0;
+    }
+    .chat-message {
+      transition: all 0.3s ease;
+    }
+    .chat-message:hover {
+      background-color: #2d3748;
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const App = () => {
+      const [isAuthenticated, setIsAuthenticated] = useState(false);
+      const [username, setUsername] = useState("");
+      const [posts, setPosts] = useState([]);
+      const [newPost, setNewPost] = useState("");
+      const [messages, setMessages] = useState([]);
+      const [newMessage, setNewMessage] = useState("");
+      const [activeUser, setActiveUser] = useState("");
+
+      // Mock authentication
+      const handleLogin = (e) => {
+        e.preventDefault();
+        if (username) {
+          setIsAuthenticated(true);
+        }
+      };
+
+      // Post creation
+      const handlePostSubmit = (e) => {
+        e.preventDefault();
+        if (newPost.trim()) {
+          setPosts([{ id: Date.now(), user: username, content: newPost, timestamp: new Date().toISOString() }, ...posts]);
+          setNewPost("");
+        }
+      };
+
+      // Chat functionality
+      const handleMessageSubmit = (e) => {
+        e.preventDefault();
+        if (newMessage.trim() && activeUser) {
+          setMessages([...messages, { id: Date.now(), sender: username, receiver: activeUser, content: newMessage, timestamp: new Date().toISOString() }]);
+          setNewMessage("");
+        }
+      };
+
+      const selectUser = (user) => {
+        setActiveUser(user);
+        setMessages(messages.filter(msg => (msg.sender === username && msg.receiver === user) || (msg.sender === user && msg.receiver === username)));
+      };
+
+      return (
+        <div className="min-h-screen text-white">
+          {!isAuthenticated ? (
+            <div className="max-w-md mx-auto mt-10 p-6 bg-gray-800 rounded-lg shadow-lg">
+              <h1 className="text-2xl font-bold mb-4">Login</h1>
+              <form onSubmit={handleLogin} className="space-y-4">
+                <input
+                  type="text"
+                  value={username}
+                  onChange={(e) => setUsername(e.target.value)}
+                  placeholder="Enter username"
+                  className="w-full p-2 bg-gray-700 rounded text-white focus:outline-none"
+                  required
+                />
+                <button type="submit" className="w-full bg-blue-600 p-2 rounded hover:bg-blue-700">
+                  Login
+                </button>
+              </form>
+            </div>
+          ) : (
+            <div className="flex h-screen">
+              {/* Sidebar for Users */}
+              <aside className="w-1/4 bg-gray-900 p-4">
+                <h2 className="text-xl font-semibold mb-4">Users</h2>
+                <ul className="space-y-2">
+                  {["Asad Shabir", "Ummar Ali", "Asadullah"].map((user) => (
+                    <li
+                      key={user}
+                      onClick={() => selectUser(user)}
+                      className={`cursor-pointer p-2 rounded ${activeUser === user ? "bg-blue-600" : "hover:bg-gray-700"}`}
+                    >
+                      {user}
+                    </li>
+                  ))}
+                </ul>
+              </aside>
+
+              {/* Main Content */}
+              <main className="w-3/4 p-6 flex flex-col">
+                {/* Post Creation */}
+                <div className="bg-gray-800 p-4 rounded-lg mb-6">
+                  <h2 className="text-xl font-semibold mb-4">Create Post</h2>
+                  <form onSubmit={handlePostSubmit} className="space-y-4">
+                    <textarea
+                      value={newPost}
+                      onChange={(e) => setNewPost(e.target.value)}
+                      placeholder="What's on your mind?"
+                      className="w-full p-2 bg-gray-700 rounded text-white focus:outline-none"
+                      rows="3"
+                    />
+                    <button type="submit" className="bg-blue-600 p-2 rounded hover:bg-blue-700">
+                      Post
+                    </button>
+                  </form>
+                </div>
+
+                {/* Posts Feed */}
+                <div className="space-y-4 mb-6">
+                  {posts.map((post) => (
+                    <div key={post.id} className="bg-gray-800 p-4 rounded-lg">
+                      <div className="flex items-center mb-2">
+                        <span className="font-semibold">{post.user}</span>
+                        <span className="text-gray-400 text-sm ml-2">{new Date(post.timestamp).toLocaleTimeString()}</span>
+                      </div>
+                      <p>{post.content}</p>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Chat Section */}
+                <div className="bg-gray-800 p-4 rounded-lg">
+                  <h2 className="text-xl font-semibold mb-4">Chat with {activeUser || "Select a user"}</h2>
+                  <div className="h-64 overflow-y-auto mb-4 space-y-2">
+                    {messages.map((msg) => (
+                      <div
+                        key={msg.id}
+                        className={`chat-message p-2 rounded ${msg.sender === username ? "bg-blue-600 ml-auto" : "bg-gray-700"} max-w-xs`}
+                      >
+                        <p>{msg.content}</p>
+                        <span className="text-xs text-gray-400">{new Date(msg.timestamp).toLocaleTimeString()}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <form onSubmit={handleMessageSubmit} className="flex space-x-2">
+                    <input
+                      type="text"
+                      value={newMessage}
+                      onChange={(e) => setNewMessage(e.target.value)}
+                      placeholder="Type a message..."
+                      className="flex-1 p-2 bg-gray-700 rounded text-white focus:outline-none"
+                    />
+                    <button type="submit" className="bg-blue-600 p-2 rounded hover:bg-blue-700">
+                      Send
+                    </button>
+                  </form>
+                </div>
+              </main>
+            </div>
+          )}
+        </div>
+      );
+    };
+
+    ReactDOM.render(<App />, document.getElementById("root"));
+  </script>
+</body>
+</html>

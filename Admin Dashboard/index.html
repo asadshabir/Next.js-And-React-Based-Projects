@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>Next.js Admin Dashboard</title>
+  <style>
+    /* Reset & base */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+        Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+      background-color: #f4f7fa;
+      color: #333;
+      display: flex;
+      height: 100vh;
+      max-height: 600px;
+      overflow: hidden;
+    }
+    /* Sidebar */
+    nav {
+      width: 70px;
+      background: #121212;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 1rem 0;
+      color: #bbb;
+      transition: width 0.3s ease;
+    }
+    nav:hover,
+    nav:focus-within {
+      width: 200px;
+      color: #fff;
+    }
+    nav a {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      padding: 1rem 1.5rem;
+      text-decoration: none;
+      color: inherit;
+      font-weight: 600;
+      border-left: 4px solid transparent;
+      cursor: pointer;
+      transition: background 0.3s, border-left 0.3s;
+      white-space: nowrap;
+    }
+    nav a svg {
+      flex-shrink: 0;
+      width: 24px;
+      height: 24px;
+      margin-right: 1rem;
+      fill: currentColor;
+    }
+    nav a:hover,
+    nav a:focus {
+      background: #1f1f1f;
+      border-left: 4px solid #0070f3;
+      outline: none;
+      color: #0070f3;
+    }
+    nav a span {
+      overflow: hidden;
+    }
+    /* Main content */
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      padding: 1rem 1.2rem;
+      overflow-y: auto;
+    }
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    header h1 {
+      font-size: 1.25rem;
+      font-weight: 700;
+      margin: 0;
+      color: #0070f3;
+    }
+    .profile {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: url('https://images.unsplash.com/photo-1502685104226-ee32379fefbe?ixlib=rb-4.0.3&auto=format&fit=crop&w=64&q=80') no-repeat center/cover;
+      cursor: pointer;
+      border: 2px solid #0070f3;
+    }
+    /* Dashboard grid */
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-gap: 1rem;
+      flex: 1 1 auto;
+      min-height: 0;
+    }
+    /* Card styles */
+    .card {
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgb(0 0 0 / 0.1);
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .card h2 {
+      margin: 0 0 0.75rem 0;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #444;
+    }
+    /* Analytics charts container */
+    #charts {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    #charts > div {
+      flex: 1;
+    }
+    /* User table */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+    }
+    thead {
+      background-color: #0070f3;
+      color: white;
+    }
+    th, td {
+      padding: 8px 12px;
+      text-align: left;
+      border-bottom: 1px solid #eee;
+    }
+    tbody tr:hover {
+      background-color: #f1f8ff;
+    }
+    /* Responsive adjustments */
+    @media (max-width: 600px) {
+      body {
+        flex-direction: column;
+        max-height: 600px;
+      }
+      nav {
+        width: 100%;
+        height: 60px;
+        flex-direction: row;
+        padding: 0 1rem;
+        justify-content: space-around;
+      }
+      nav a {
+        padding: 0.75rem 0.5rem;
+        white-space: normal;
+        text-align: center;
+        border-left: none;
+        border-top: 4px solid transparent;
+      }
+      nav a:hover,
+      nav a:focus {
+        border-left: none;
+        border-top: 4px solid #0070f3;
+      }
+      nav a svg {
+        margin: 0 auto 0.25rem auto;
+      }
+      main {
+        padding: 0.5rem;
+        flex: 1 1 auto;
+        overflow-y: auto;
+      }
+      .dashboard {
+        grid-template-columns: 1fr;
+        grid-gap: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav aria-label="Primary">
+    <a href="#" tabindex="0" aria-current="page">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8v-10h-8v10zm0-18v6h8V3h-8z"/></svg>
+      <span>Dashboard</span>
+    </a>
+    <a href="#">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 17v-2c0-3 3-5 6-5s6 2 6 5v2H3zm7-7c1.1 0 2-.9 2-2a2 2 0 0 0-4 0c0 1.1.9 2 2 2z"/></svg>
+      <span>Analytics</span>
+    </a>
+    <a href="#">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 11c1.66 0 3-1.34 3-3S17.66 5 16 5s-3 1.34-3 3 1.34 3 3 3zm-8 3c1.66 0 3-1.34 3-3S9.66 8 8 8 5 9.34 5 11s1.34 3 3 3zm0 2c-2.67 0-8 1.34-8 4v1h14v-1c0-2.66-5.33-4-8-4zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 2.02 1.97 3.45v1h6v-1c0-2.66-5.33-4-7-4z"/></svg>
+      <span>Users</span>
+    </a>
+    <a href="#">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M19.43 12.98l1.77-1.77-3.39-3.39-1.77 1.77-2.12-2.12 1.77-1.77-3.39-3.39-1.77 1.77-2.12-2.12 1.77-1.77-3.39-3.39-1.77 1.77-2.12-2.12 1.77-1.77-3.39-3.39L12 2l-1.77 1.77-3.39-3.39 1.77-1.77-3.39-3.39 1.77-1.77L12 7.26l2.12-2.12-1.77-1.77 3.39-3.39 1.77 1.77 2.12-2.12-1.77 1.77 3.39 3.39 1.77-1.77 2.12 2.12-1.77 1.77 3.39 3.39-1.77 1.77 2.12 2.12-1.77 1.77z"/></svg>
+      <span>Settings</span>
+    </a>
+  </nav>
+  <main>
+    <header>
+      <h1>Admin Dashboard</h1>
+      <div class="profile" tabindex="0" aria-label="User Profile"></div>
+    </header>
+    <section class="dashboard" aria-label="Dashboard content">
+      <section class="card" aria-label="Real-time analytics">
+        <h2>Real-Time Analytics</h2>
+        <div id="charts">
+          <div>
+            <canvas id="lineChart" width="100" height="70" aria-label="Line chart showing real-time user sessions" role="img"></canvas>
+          </div>
+          <div>
+            <canvas id="barChart" width="100" height="70" aria-label="Bar chart showing sales per category" role="img"></canvas>
+          </div>
+        </div>
+      </section>
+      <section class="card" aria-label="User management">
+        <h2>User Management</h2>
+        <table role="grid" aria-describedby="userTableDescription">
+          <caption id="userTableDescription" class="sr-only">List of users with name, email, and role</caption>
+          <thead>
+            <tr>
+              <th scope="col">Name</th><th scope="col">Email</th><th scope="col">Role</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>Asad Shabir</td><td>asad.programmer@example.com</td><td>Admin</td></tr>
+            <tr><td>Ummar Ali</td><td>ummar.developer@example.com</td><td>Editor</td></tr>
+            <tr><td>Zain Ali</td><td>zain.ali@example.com</td><td>Viewer</td></tr>
+            <tr><td>Talha Anjum</td><td>talha.anjum@example.com</td><td>Editor</td></tr>
+            <tr><td>M.Ali</td><td>m.ali@example.com</td><td>Admin</td></tr>
+          </tbody>
+        </table>
+      </section>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    // Line chart - Real-time sessions
+    const lineCtx = document.getElementById('lineChart').getContext('2d');
+    const lineChart = new Chart(lineCtx, {
+      type: 'line',
+      data: {
+        labels: Array.from({length: 12}, (_,i) => `${i+1}m`),
+        datasets: [{
+          label: 'Active Users',
+          data: [12, 19, 15, 22, 30, 27, 35, 40, 38, 41, 45, 50],
+          borderColor: '#0070f3',
+          backgroundColor: 'rgba(0, 112, 243, 0.2)',
+          fill: true,
+          tension: 0.3,
+          pointRadius: 3,
+          pointHoverRadius: 5,
+        }]
+      },
+      options: {
+        scales: {
+          y: { beginAtZero: true, ticks: { stepSize: 10 } },
+          x: { grid: { display: false } }
+        },
+        plugins: {
+          legend: { display: false }
+        },
+        responsive: true,
+        maintainAspectRatio: false,
+      },
+    });
+
+    // Bar chart - Sales per category
+    const barCtx = document.getElementById('barChart').getContext('2d');
+    const barChart = new Chart(barCtx, {
+      type: 'bar',
+      data: {
+        labels: ['Electronics', 'Apparel', 'Home & Garden', 'Sports', 'Others'],
+        datasets: [{
+          label: 'Sales',
+          data: [120, 90, 75, 60, 30],
+          backgroundColor: [
+            '#0070f3',
+            '#3291ff',
+            '#12aaff',
+            '#51caff',
+            '#a0d6ff'
+          ],
+          borderRadius: 4,
+          barPercentage: 0.6,
+        }]
+      },
+      options: {
+        scales: {
+          y: { beginAtZero: true, ticks: { stepSize: 20 } },
+          x: { grid: { display: false } }
+        },
+        plugins: {
+          legend: { display: false }
+        },
+        responsive: true,
+        maintainAspectRatio: false,
+      },
+    });
+  </script>
+</body>
+</html>
+
+

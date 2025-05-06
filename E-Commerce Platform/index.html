@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>React E-Commerce</title>
+  <script src="https://cdn.jsdelivr.net/npm/react@18.2.0/umd/react.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/react-dom@18.2.0/umd/react-dom.development.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@babel/standalone@7.22.9/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f5e9e2;
+      margin: 0;
+      padding: 0;
+    }
+    .product-card {
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .product-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    const productsData = [
+      { id: 1, name: "Sweater", price: 180.90, discountedPrice: 82.39, category: "Clothing", image: "images/sweater.jpg" },
+      { id: 2, name: "Jacket", price: 146.50, discountedPrice: 91.82, category: "Clothing", image: "images/jacket.jpg" },
+      { id: 3, name: "Tote Bag", price: 90, category: "Accessories", image: "images/totebag.jpg" },
+      { id: 4, name: "Backpack", price: 159, category: "Accessories", image: "images/backpack.jpg" },
+    ];
+
+    const App = () => {
+      const [cart, setCart] = useState([]);
+      const [products, setProducts] = useState(productsData);
+      const [categoryFilter, setCategoryFilter] = useState("All");
+      const [cartTotal, setCartTotal] = useState(0);
+
+      useEffect(() => {
+        const total = cart.reduce((sum, item) => sum + item.price, 0);
+        setCartTotal(total);
+      }, [cart]);
+
+      const addToCart = (product) => {
+        setCart([...cart, { ...product, price: product.discountedPrice || product.price }]);
+      };
+
+      const removeFromCart = (id) => {
+        setCart(cart.filter(item => item.id !== id));
+      };
+
+      const handleFilterChange = (category) => {
+        setCategoryFilter(category);
+        if (category === "All") {
+          setProducts(productsData);
+        } else {
+          setProducts(productsData.filter(product => product.category === category));
+        }
+      };
+
+      const handlePayment = () => {
+        alert(`Processing payment of $${cartTotal.toFixed(2)}... (Payment integration placeholder)`);
+        setCart([]);
+      };
+
+      return (
+        <div className="min-h-screen">
+          {/* Header */}
+          <header className="bg-white shadow-md p-4 flex justify-between items-center">
+            <div className="flex items-center space-x-2">
+              <span className="text-2xl font-bold text-[#8B5A2B]">R</span>
+              <span className="text-lg font-semibold text-[#8B5A2B]">React E-Commerce</span>
+            </div>
+            <div className="flex space-x-4">
+              <a href="#" className="text-[#8B5A2B] hover:text-[#A67C00]">Home</a>
+              <a href="#" className="text-[#8B5A2B] hover:text-[#A67C00]">Men</a>
+              <a href="#" className="text-[#8B5A2B] hover:text-[#A67C00]">Women</a>
+              <a href="#" className="text-[#8B5A2B] hover:text-[#A67C00]">Kids</a>
+            </div>
+            <div className="flex items-center space-x-2">
+              <button className="bg-[#8B5A2B] text-white px-4 py-2 rounded hover:bg-[#A67C00]">
+                Login
+              </button>
+              <span className="text-[#8B5A2B]">{cart.length} 🛒</span>
+            </div>
+          </header>
+
+          {/* Hero Section */}
+          <section className="bg-[#8B5A2B] text-white py-16 text-center">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">React E-Commerce</h1>
+            <p className="text-lg mb-6">Explore Our Exclusive Collection</p>
+            <div className="flex justify-center space-x-4">
+              <button className="bg-white text-[#8B5A2B] px-6 py-2 rounded hover:bg-[#A67C00] hover:text-white">
+                Shop Now
+              </button>
+              <button className="bg-white text-[#8B5A2B] px-6 py-2 rounded hover:bg-[#A67C00] hover:text-white">
+                Categories
+              </button>
+            </div>
+          </section>
+
+          {/* Main Content */}
+          <main className="max-w-7xl mx-auto p-6 flex flex-col md:flex-row gap-6">
+            {/* Product Filters */}
+            <aside className="w-full md:w-1/4 bg-white p-4 rounded-lg shadow-md">
+              <h2 className="text-xl font-semibold mb-4">Product Filters</h2>
+              <div className="space-y-2">
+                <button
+                  className={`w-full text-left px-4 py-2 rounded ${categoryFilter === "All" ? "bg-[#8B5A2B] text-white" : "bg-gray-100"}`}
+                  onClick={() => handleFilterChange("All")}
+                >
+                  All
+                </button>
+                <button
+                  className={`w-full text-left px-4 py-2 rounded ${categoryFilter === "Clothing" ? "bg-[#8B5A2B] text-white" : "bg-gray-100"}`}
+                  onClick={() => handleFilterChange("Clothing")}
+                >
+                  Clothing
+                </button>
+                <button
+                  className={`w-full text-left px-4 py-2 rounded ${categoryFilter === "Accessories" ? "bg-[#8B5A2B] text-white" : "bg-gray-100"}`}
+                  onClick={() => handleFilterChange("Accessories")}
+                >
+                  Accessories
+                </button>
+              </div>
+            </aside>
+
+            {/* Products and Cart */}
+            <div className="w-full md:w-3/4">
+              {/* Products Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                {products.map(product => (
+                  <div key={product.id} className="product-card bg-white p-4 rounded-lg shadow-md">
+                    <img src={product.image} alt={product.name} className="w-full h-48 object-cover rounded-md mb-4" />
+                    <h3 className="text-lg font-semibold">{product.name}</h3>
+                    <div className="flex items-center space-x-2 mb-2">
+                      {product.discountedPrice ? (
+                        <>
+                          <span className="text-gray-500 line-through">${product.price.toFixed(2)}</span>
+                          <span className="text-[#8B5A2B] font-bold">${product.discountedPrice.toFixed(2)}</span>
+                        </>
+                      ) : (
+                        <span className="text-[#8B5A2B] font-bold">${product.price.toFixed(2)}</span>
+                      )}
+                    </div>
+                    <button
+                      className="w-full bg-[#8B5A2B] text-white py-2 rounded hover:bg-[#A67C00]"
+                      onClick={() => addToCart(product)}
+                    >
+                      Add to Cart
+                    </button>
+                  </div>
+                ))}
+              </div>
+
+              {/* Cart Section */}
+              <div className="bg-white p-4 rounded-lg shadow-md">
+                <h2 className="text-xl font-semibold mb-4">Cart Total: ${cartTotal.toFixed(2)}</h2>
+                {cart.length === 0 ? (
+                  <p className="text-gray-500">Your cart is empty.</p>
+                ) : (
+                  <div>
+                    {cart.map(item => (
+                      <div key={item.id} className="flex justify-between items-center mb-2">
+                        <span>{item.name} - ${item.price.toFixed(2)}</span>
+                        <button
+                          className="text-red-500 hover:text-red-700"
+                          onClick={() => removeFromCart(item.id)}
+                        >
+                          Remove
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      className="w-full bg-[#8B5A2B] text-white py-2 rounded mt-4 hover:bg-[#A67C00]"
+                      onClick={handlePayment}
+                    >
+                      Proceed to Payment
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          </main>
+        </div>
+      );
+    };
+
+    ReactDOM.render(<App />, document.getElementById("root"));
+  </script>
+</body>
+</html>
